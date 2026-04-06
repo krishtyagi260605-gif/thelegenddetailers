@@ -138,7 +138,7 @@ Backend:
 Frontend:
 
 - Root directory: `frontend-legends`
-- Build command: `npm install && npm run build`
+- Build command: `npm install && npm run build:render`
 - Start command: `npm run start -- --hostname 0.0.0.0 --port $PORT`
 
 ### Production notes

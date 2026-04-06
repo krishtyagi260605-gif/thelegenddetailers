@@ -6,6 +6,7 @@
     "dev": "next dev --turbopack",
     "dev:stable": "next dev",
     "build:raw": "next build",
+    "build:render": "next build",
     "build": "node scripts/build.mjs",
     "start": "next start",
     "lint": "eslint"
