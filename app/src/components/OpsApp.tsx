@@ -270,6 +270,23 @@ function MetricCard({
   );
 }
 
+function StatusBadge({ status }: { status?: string | null }) {
+  const palette =
+    status === "Completed"
+      ? "bg-emerald-100 text-emerald-700"
+      : status === "In Progress"
+        ? "bg-sky-100 text-sky-700"
+        : status === "Delivered"
+          ? "bg-violet-100 text-violet-700"
+          : "bg-amber-100 text-amber-700";
+
+  return (
+    <span className={`inline-flex rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-[0.14em] ${palette}`}>
+      {status || "Pending"}
+    </span>
+  );
+}
+
 export default function OpsApp() {
   const [token, setToken] = useState<string | null>(null);
   const [user, setUser] = useState<AppUser | null>(null);
@@ -543,6 +560,69 @@ export default function OpsApp() {
           </section>
         ) : null}
 
+        {dashboard ? (
+          <section className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
+            <div className="overflow-hidden rounded-[30px] border border-black/10 bg-[#111111] p-6 shadow-[0_22px_50px_rgba(0,0,0,0.12)]">
+              <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+                <div>
+                  <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-[11px] font-bold uppercase tracking-[0.18em] text-white/80">
+                    Workshop pulse
+                  </div>
+                  <h2 className="mt-4 text-3xl font-black tracking-tight text-white">
+                    The Legend Detailer is ready for quick repeat intake
+                  </h2>
+                  <p className="mt-3 max-w-2xl text-sm leading-relaxed text-white/65">
+                    Search by phone or plate, pull old customer details, and create the next job without making the staff type the same information again.
+                  </p>
+                </div>
+                <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                  {[
+                    `${dashboard.summary.active_jobs} active`,
+                    `${dashboard.summary.total_customers} customers`,
+                    `${dashboard.summary.total_vehicles} vehicles`,
+                    `${dashboard.summary.repeat_customers} repeat`,
+                  ].map((item) => (
+                    <div key={item} className="rounded-2xl border border-white/10 bg-white/5 px-4 py-4 text-center text-sm font-bold text-white">
+                      {item}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div className="rounded-[30px] border border-black/10 bg-[var(--panel)] p-5 shadow-[0_22px_50px_rgba(0,0,0,0.06)]">
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <div className="text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--muted)]">Recent activity</div>
+                  <h2 className="mt-2 text-2xl font-black tracking-tight text-[var(--text)]">Latest jobs</h2>
+                </div>
+                <div className="rounded-full bg-[#f4ead1] px-3 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-[#7c5d13]">
+                  Live
+                </div>
+              </div>
+              <div className="mt-4 space-y-3">
+                {dashboard.recent_jobs.slice(0, 4).map((job) => (
+                  <div key={job.id} className="rounded-2xl border border-black/10 bg-[#faf7f1] p-4">
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <div className="text-sm font-black text-[var(--text)]">{job.customer_name}</div>
+                        <div className="mt-1 text-xs uppercase tracking-[0.12em] text-[var(--muted)]">
+                          {job.plate_number} · {job.car_model}
+                        </div>
+                      </div>
+                      <StatusBadge status={job.status} />
+                    </div>
+                    <div className="mt-3 flex items-center justify-between gap-3 text-sm">
+                      <span className="text-[var(--muted)]">{job.service_type}</span>
+                      <span className="font-bold text-[var(--text)]">{money(job.amount)}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+        ) : null}
+
         {error ? (
           <div className="rounded-[24px] border border-[var(--red)]/20 bg-[var(--panel)] px-5 py-4 text-sm text-[var(--red)] shadow-[0_18px_40px_rgba(0,0,0,0.05)]">
             {error}
@@ -735,7 +815,10 @@ export default function OpsApp() {
                               {job.plate_number} · {job.vehicle_brand || "Brand"} · {job.car_model}
                             </div>
                           </div>
-                          <div className="text-sm font-bold text-[var(--text)]">{money(job.amount)}</div>
+                          <div className="space-y-2 text-right">
+                            <div className="text-sm font-bold text-[var(--text)]">{money(job.amount)}</div>
+                            <StatusBadge status={job.status} />
+                          </div>
                         </div>
                         <div className="mt-3 text-sm text-[var(--muted)]">{job.service_type}</div>
                         <div className="mt-1 text-xs text-[var(--muted)]">
