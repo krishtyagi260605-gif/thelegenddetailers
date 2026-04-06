@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 import {
   CarFront,
@@ -8,7 +9,6 @@ import {
   Loader2,
   LogOut,
   Search,
-  ShieldCheck,
   Sparkles,
   Users,
 } from "lucide-react";
@@ -177,17 +177,43 @@ function LoginScreen({
 }) {
   return (
     <main className="ops-shell ops-grid-bg flex min-h-screen items-center justify-center px-6 py-10">
-      <div className="w-full max-w-md rounded-[32px] border border-black/10 bg-[var(--panel)] p-8 shadow-[0_30px_80px_rgba(0,0,0,0.08)]">
+      <div className="grid w-full max-w-5xl overflow-hidden rounded-[36px] border border-black/10 bg-[var(--panel)] shadow-[0_30px_80px_rgba(0,0,0,0.08)] lg:grid-cols-[0.88fr_1.12fr]">
+        <div className="relative hidden overflow-hidden bg-[#111111] p-8 lg:block">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(216,163,34,0.28),transparent_36%),radial-gradient(circle_at_bottom_right,rgba(224,35,35,0.18),transparent_30%)]" />
+          <div className="relative z-10 flex h-full flex-col justify-between">
+            <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-[11px] font-bold uppercase tracking-[0.22em] text-white">
+              Tablet-first ops app
+            </div>
+            <div className="space-y-6">
+              <div className="relative mx-auto h-56 w-72 overflow-hidden rounded-[2rem] border border-white/10 bg-[#f8f0de] p-4 shadow-[0_20px_60px_rgba(0,0,0,0.35)]">
+                <Image src="/legend-logo.png" alt="The Legend Detailer" fill sizes="288px" className="object-contain object-top mix-blend-multiply" />
+              </div>
+              <div className="space-y-3 text-white">
+                <h2 className="text-4xl font-black uppercase tracking-tight">The Legend Detailer</h2>
+                <p className="text-sm leading-relaxed text-white/72">
+                  Intake, repeat-customer autofill, and workshop monitoring designed for the owner and a small employee team using phones or tablets.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="p-8 lg:p-10">
         <div className="mb-8">
-          <div className="inline-flex items-center gap-2 rounded-full border border-black/10 bg-black px-4 py-2 text-[11px] font-bold uppercase tracking-[0.22em] text-white">
-            <ShieldCheck className="h-4 w-4 text-[var(--gold)]" />
-            Legends Ops
+          <div className="flex items-center gap-4">
+            <div className="relative h-16 w-16 overflow-hidden rounded-2xl border border-black/10 bg-white p-2 shadow-[0_18px_40px_rgba(0,0,0,0.08)] lg:hidden">
+              <Image src="/legend-logo.png" alt="The Legend Detailer" fill sizes="64px" className="object-contain object-top" />
+            </div>
+            <div className="inline-flex items-center gap-2 rounded-full border border-black/10 bg-black px-4 py-2 text-[11px] font-bold uppercase tracking-[0.22em] text-white">
+              <Sparkles className="h-4 w-4 text-[var(--gold)]" />
+              The Legend Detailer Ops
+            </div>
           </div>
           <h1 className="mt-5 text-4xl font-black tracking-tight text-[var(--text)]">
-            Owner and employee app
+            Smooth login for owner and employees
           </h1>
           <p className="mt-3 text-sm leading-relaxed text-[var(--muted)]">
-            Simple tablet-first login for intake, repeat-customer autofill, and live job tracking.
+            Secure access to repeat-customer autofill, customer history, and live car workflow. Built to be fast, simple, and stress-free on tablets.
           </p>
         </div>
 
@@ -212,12 +238,13 @@ function LoginScreen({
           <button
             type="submit"
             disabled={loading}
-            className="flex w-full items-center justify-center gap-2 rounded-2xl bg-black px-5 py-4 text-sm font-bold uppercase tracking-[0.18em] text-white"
+            className="flex w-full items-center justify-center gap-2 rounded-2xl bg-black px-5 py-4 text-sm font-bold uppercase tracking-[0.18em] text-white shadow-[0_18px_30px_rgba(0,0,0,0.14)] transition-transform hover:scale-[1.01]"
           >
             {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4 text-[var(--gold)]" />}
-            {loading ? "Signing in..." : "Open Legends Ops"}
+            {loading ? "Signing in..." : "Open The Legend Detailer Ops"}
           </button>
         </form>
+        </div>
       </div>
     </main>
   );
@@ -464,12 +491,17 @@ export default function OpsApp() {
   return (
     <main className="ops-shell ops-grid-bg px-4 py-4 md:px-6 md:py-6">
       <div className="mx-auto max-w-7xl space-y-6">
-        <section className="rounded-[34px] border border-black/10 bg-[var(--panel)] p-5 shadow-[0_24px_64px_rgba(0,0,0,0.08)]">
+        <section className="overflow-hidden rounded-[34px] border border-black/10 bg-[var(--panel)] p-5 shadow-[0_24px_64px_rgba(0,0,0,0.08)]">
           <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
             <div>
-              <div className="inline-flex items-center gap-2 rounded-full bg-black px-4 py-2 text-[11px] font-bold uppercase tracking-[0.22em] text-white">
-                <Sparkles className="h-4 w-4 text-[var(--gold)]" />
-                Legends Ops App
+              <div className="flex flex-wrap items-center gap-4">
+                <div className="relative h-20 w-24 overflow-hidden rounded-[1.4rem] border border-black/10 bg-[#f8f0de] p-2 shadow-[0_18px_40px_rgba(0,0,0,0.06)]">
+                  <Image src="/legend-logo.png" alt="The Legend Detailer" fill sizes="96px" className="object-contain object-top mix-blend-multiply" />
+                </div>
+                <div className="inline-flex items-center gap-2 rounded-full bg-black px-4 py-2 text-[11px] font-bold uppercase tracking-[0.22em] text-white">
+                  <Sparkles className="h-4 w-4 text-[var(--gold)]" />
+                  The Legend Detailer Ops App
+                </div>
               </div>
               <h1 className="mt-4 text-4xl font-black tracking-tight text-[var(--text)]">
                 Fast intake for owner and employees
@@ -535,7 +567,7 @@ export default function OpsApp() {
                   value={lookupQuery}
                   onChange={(event) => setLookupQuery(event.target.value)}
                   placeholder="Phone, plate, or customer name"
-                  className="min-w-0 flex-1 rounded-2xl border border-black/10 bg-[#faf7f1] px-4 py-4 text-base outline-none"
+                  className="min-w-0 flex-1 rounded-2xl border border-black/10 bg-[#faf7f1] px-4 py-4 text-base outline-none transition-colors focus:border-[var(--gold)]"
                 />
                 <button
                   type="button"
@@ -571,7 +603,7 @@ export default function OpsApp() {
                           key={vehicle.id}
                           type="button"
                           onClick={() => applyLookupSelection(lookup.customer, vehicle)}
-                          className="rounded-2xl border border-black/10 bg-white p-4 text-left"
+                          className="rounded-2xl border border-black/10 bg-white p-4 text-left transition-all hover:-translate-y-0.5 hover:border-[var(--gold)]/50"
                         >
                           <div className="text-[10px] font-bold uppercase tracking-[0.16em] text-[var(--muted)]">Saved vehicle</div>
                           <div className="mt-2 text-base font-black text-[var(--text)]">
@@ -627,38 +659,38 @@ export default function OpsApp() {
             </div>
 
             <div className="mt-6 grid gap-4 lg:grid-cols-2">
-              <input value={intake.fullName} onChange={(e) => setIntake({ ...intake, fullName: e.target.value })} placeholder="Customer full name" className="rounded-2xl border border-black/10 bg-[#faf7f1] px-4 py-4 outline-none" />
-              <input value={intake.phone} onChange={(e) => setIntake({ ...intake, phone: e.target.value })} placeholder="Phone number" className="rounded-2xl border border-black/10 bg-[#faf7f1] px-4 py-4 outline-none" />
-              <input value={intake.altPhone} onChange={(e) => setIntake({ ...intake, altPhone: e.target.value })} placeholder="Alt phone" className="rounded-2xl border border-black/10 bg-[#faf7f1] px-4 py-4 outline-none" />
-              <input value={intake.address} onChange={(e) => setIntake({ ...intake, address: e.target.value })} placeholder="Address" className="rounded-2xl border border-black/10 bg-[#faf7f1] px-4 py-4 outline-none" />
-              <input value={intake.plateNumber} onChange={(e) => setIntake({ ...intake, plateNumber: e.target.value.toUpperCase() })} placeholder="Plate number" className="rounded-2xl border border-black/10 bg-[#faf7f1] px-4 py-4 outline-none" />
-              <input value={intake.brand} onChange={(e) => setIntake({ ...intake, brand: e.target.value })} placeholder="Vehicle brand" className="rounded-2xl border border-black/10 bg-[#faf7f1] px-4 py-4 outline-none" />
-              <input value={intake.model} onChange={(e) => setIntake({ ...intake, model: e.target.value })} placeholder="Vehicle model" className="rounded-2xl border border-black/10 bg-[#faf7f1] px-4 py-4 outline-none" />
-              <input value={intake.color} onChange={(e) => setIntake({ ...intake, color: e.target.value })} placeholder="Color" className="rounded-2xl border border-black/10 bg-[#faf7f1] px-4 py-4 outline-none" />
-              <input value={intake.fuelType} onChange={(e) => setIntake({ ...intake, fuelType: e.target.value })} placeholder="Fuel type" className="rounded-2xl border border-black/10 bg-[#faf7f1] px-4 py-4 outline-none" />
-              <input value={intake.assignedTo} onChange={(e) => setIntake({ ...intake, assignedTo: e.target.value })} placeholder="Assigned employee" className="rounded-2xl border border-black/10 bg-[#faf7f1] px-4 py-4 outline-none" />
+              <input value={intake.fullName} onChange={(e) => setIntake({ ...intake, fullName: e.target.value })} placeholder="Customer full name" className="rounded-2xl border border-black/10 bg-[#faf7f1] px-4 py-4 outline-none transition-colors focus:border-[var(--gold)]" />
+              <input value={intake.phone} onChange={(e) => setIntake({ ...intake, phone: e.target.value })} placeholder="Phone number" className="rounded-2xl border border-black/10 bg-[#faf7f1] px-4 py-4 outline-none transition-colors focus:border-[var(--gold)]" />
+              <input value={intake.altPhone} onChange={(e) => setIntake({ ...intake, altPhone: e.target.value })} placeholder="Alt phone" className="rounded-2xl border border-black/10 bg-[#faf7f1] px-4 py-4 outline-none transition-colors focus:border-[var(--gold)]" />
+              <input value={intake.address} onChange={(e) => setIntake({ ...intake, address: e.target.value })} placeholder="Address" className="rounded-2xl border border-black/10 bg-[#faf7f1] px-4 py-4 outline-none transition-colors focus:border-[var(--gold)]" />
+              <input value={intake.plateNumber} onChange={(e) => setIntake({ ...intake, plateNumber: e.target.value.toUpperCase() })} placeholder="Plate number" className="rounded-2xl border border-black/10 bg-[#faf7f1] px-4 py-4 outline-none transition-colors focus:border-[var(--gold)]" />
+              <input value={intake.brand} onChange={(e) => setIntake({ ...intake, brand: e.target.value })} placeholder="Vehicle brand" className="rounded-2xl border border-black/10 bg-[#faf7f1] px-4 py-4 outline-none transition-colors focus:border-[var(--gold)]" />
+              <input value={intake.model} onChange={(e) => setIntake({ ...intake, model: e.target.value })} placeholder="Vehicle model" className="rounded-2xl border border-black/10 bg-[#faf7f1] px-4 py-4 outline-none transition-colors focus:border-[var(--gold)]" />
+              <input value={intake.color} onChange={(e) => setIntake({ ...intake, color: e.target.value })} placeholder="Color" className="rounded-2xl border border-black/10 bg-[#faf7f1] px-4 py-4 outline-none transition-colors focus:border-[var(--gold)]" />
+              <input value={intake.fuelType} onChange={(e) => setIntake({ ...intake, fuelType: e.target.value })} placeholder="Fuel type" className="rounded-2xl border border-black/10 bg-[#faf7f1] px-4 py-4 outline-none transition-colors focus:border-[var(--gold)]" />
+              <input value={intake.assignedTo} onChange={(e) => setIntake({ ...intake, assignedTo: e.target.value })} placeholder="Assigned employee" className="rounded-2xl border border-black/10 bg-[#faf7f1] px-4 py-4 outline-none transition-colors focus:border-[var(--gold)]" />
 
-              <select value={intake.serviceType} onChange={(e) => setIntake({ ...intake, serviceType: e.target.value })} className="rounded-2xl border border-black/10 bg-[#faf7f1] px-4 py-4 outline-none">
+              <select value={intake.serviceType} onChange={(e) => setIntake({ ...intake, serviceType: e.target.value })} className="rounded-2xl border border-black/10 bg-[#faf7f1] px-4 py-4 outline-none transition-colors focus:border-[var(--gold)]">
                 {serviceOptions.map((item) => (
                   <option key={item}>{item}</option>
                 ))}
               </select>
 
-              <input value={intake.amount} onChange={(e) => setIntake({ ...intake, amount: e.target.value })} type="number" placeholder="Amount" className="rounded-2xl border border-black/10 bg-[#faf7f1] px-4 py-4 outline-none" />
+              <input value={intake.amount} onChange={(e) => setIntake({ ...intake, amount: e.target.value })} type="number" placeholder="Amount" className="rounded-2xl border border-black/10 bg-[#faf7f1] px-4 py-4 outline-none transition-colors focus:border-[var(--gold)]" />
 
-              <select value={intake.paymentMode} onChange={(e) => setIntake({ ...intake, paymentMode: e.target.value })} className="rounded-2xl border border-black/10 bg-[#faf7f1] px-4 py-4 outline-none">
+              <select value={intake.paymentMode} onChange={(e) => setIntake({ ...intake, paymentMode: e.target.value })} className="rounded-2xl border border-black/10 bg-[#faf7f1] px-4 py-4 outline-none transition-colors focus:border-[var(--gold)]">
                 <option>Cash</option>
                 <option>Online / UPI</option>
               </select>
 
-              <select value={intake.serviceLocation} onChange={(e) => setIntake({ ...intake, serviceLocation: e.target.value })} className="rounded-2xl border border-black/10 bg-[#faf7f1] px-4 py-4 outline-none">
+              <select value={intake.serviceLocation} onChange={(e) => setIntake({ ...intake, serviceLocation: e.target.value })} className="rounded-2xl border border-black/10 bg-[#faf7f1] px-4 py-4 outline-none transition-colors focus:border-[var(--gold)]">
                 <option>In-Shop</option>
                 <option>Doorstep</option>
               </select>
 
-              <textarea value={intake.customerNotes} onChange={(e) => setIntake({ ...intake, customerNotes: e.target.value })} placeholder="Customer notes" className="min-h-28 rounded-2xl border border-black/10 bg-[#faf7f1] px-4 py-4 outline-none lg:col-span-2" />
-              <textarea value={intake.vehicleNotes} onChange={(e) => setIntake({ ...intake, vehicleNotes: e.target.value })} placeholder="Vehicle notes" className="min-h-28 rounded-2xl border border-black/10 bg-[#faf7f1] px-4 py-4 outline-none lg:col-span-2" />
-              <textarea value={intake.notes} onChange={(e) => setIntake({ ...intake, notes: e.target.value })} placeholder="Job notes, requests, add-ons, finish promise" className="min-h-32 rounded-2xl border border-black/10 bg-[#faf7f1] px-4 py-4 outline-none lg:col-span-2" />
+              <textarea value={intake.customerNotes} onChange={(e) => setIntake({ ...intake, customerNotes: e.target.value })} placeholder="Customer notes" className="min-h-28 rounded-2xl border border-black/10 bg-[#faf7f1] px-4 py-4 outline-none transition-colors focus:border-[var(--gold)] lg:col-span-2" />
+              <textarea value={intake.vehicleNotes} onChange={(e) => setIntake({ ...intake, vehicleNotes: e.target.value })} placeholder="Vehicle notes" className="min-h-28 rounded-2xl border border-black/10 bg-[#faf7f1] px-4 py-4 outline-none transition-colors focus:border-[var(--gold)] lg:col-span-2" />
+              <textarea value={intake.notes} onChange={(e) => setIntake({ ...intake, notes: e.target.value })} placeholder="Job notes, requests, add-ons, finish promise" className="min-h-32 rounded-2xl border border-black/10 bg-[#faf7f1] px-4 py-4 outline-none transition-colors focus:border-[var(--gold)] lg:col-span-2" />
             </div>
 
             <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
