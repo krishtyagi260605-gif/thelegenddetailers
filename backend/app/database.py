@@ -33,6 +33,9 @@ async def ensure_schema() -> None:
                 "vehicle_brand": ("VARCHAR", None),
                 "service_location": ("VARCHAR", "'In-Shop'"),
                 "assigned_to": ("VARCHAR", None),
+                "customer_id": ("INTEGER", None),
+                "vehicle_id": ("INTEGER", None),
+                "created_by_user_id": ("INTEGER", None),
             }
 
             for column_name, (column_type, default_value) in needed_columns.items():

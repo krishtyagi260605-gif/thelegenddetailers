@@ -5,6 +5,7 @@ from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 
 from .database import ensure_schema
+from .security import ensure_default_ops_users
 
 app = FastAPI(title="Legends Detailers API", version="3.0.0")
 
@@ -50,6 +51,7 @@ manager = ConnectionManager()
 @app.on_event("startup")
 async def startup():
     await ensure_schema()
+    await ensure_default_ops_users()
 
 
 @app.get("/")

@@ -3,12 +3,16 @@
 Client-ready workspace with:
 
 - `frontend-legends`: public-facing Legends Detailers website
+- `app`: separate internal ops app for owner and employees
 - `frontend-magic`: legacy redirect entry that points users to Legends admin
 - `backend`: FastAPI API with SQLite or Postgres support
 
 ## What is now working
 
 - Premium landing page for the detailing brand
+- Separate internal ops app with owner/employee login
+- Repeat-customer autofill by phone, plate, or past records
+- Customer and vehicle master records for faster repeat intake
 - Secure admin login flow inside the Legends website
 - Searchable vehicle history
 - Daily and monthly turnover metrics
@@ -41,9 +45,19 @@ npm run dev -- --port 3001
 
 Open `http://localhost:3001`
 
-### 3. Open staff admin
+### 3. Start internal ops app
 
-Open `http://localhost:3001/admin`
+```bash
+cd "/Users/krishtyagi/Desktop/legends detailer/app"
+cp .env.example .env.local
+npm run dev -- --port 3002
+```
+
+Open `http://localhost:3002`
+
+### 4. Open staff admin
+
+Public-site admin remains at `http://localhost:3001/admin`, but the recommended staff workflow is now the separate ops app.
 
 ## Optional API base URL
 
@@ -75,10 +89,32 @@ Change those before production. Staff then log in from:
 http://localhost:3001/admin
 ```
 
+Ops app default seeded users are controlled by backend env vars:
+
+```bash
+OPS_OWNER_USERNAME=admin
+OPS_OWNER_PASSWORD=legend5911
+OPS_EMPLOYEE_USERNAME=employee
+OPS_EMPLOYEE_PASSWORD=legendemployee
+```
+
+Those users log in from:
+
+```bash
+http://localhost:3002
+```
+
 ## Useful API routes
 
 - `POST /api/legends/admin/login`
 - `GET /api/legends/admin/session`
+- `POST /api/legends/ops/auth/login`
+- `GET /api/legends/ops/auth/session`
+- `GET /api/legends/ops/lookups/repeat`
+- `GET /api/legends/ops/dashboard`
+- `GET /api/legends/ops/jobs`
+- `POST /api/legends/ops/jobs`
+- `PATCH /api/legends/ops/jobs/{id}`
 - `GET /api/legends/turnover`
 - `GET /api/legends/dashboard`
 - `GET /api/legends/services`
@@ -107,6 +143,7 @@ Data storage:
 This repo includes a root [render.yaml](/Users/krishtyagi/Desktop/legends%20detailer/render.yaml) blueprint for:
 
 - `thelegenddetailers`: Next.js frontend
+- `legends-ops`: internal ops app
 - `legenddetailers-api`: FastAPI backend
 - `legenddetailers-db`: managed Postgres
 

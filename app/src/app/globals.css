@@ -1,0 +1,50 @@
+:root {
+  --bg: #f4f1eb;
+  --panel: #fffdf9;
+  --panel-alt: #111111;
+  --line: rgba(17, 17, 17, 0.08);
+  --text: #171717;
+  --muted: #66604f;
+  --gold: #d8a322;
+  --green: #1f8f58;
+  --blue: #1767d2;
+  --red: #c44939;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: linear-gradient(180deg, #f7f4ef 0%, #efe7dc 100%);
+  color: var(--text);
+  font-family: "SF Pro Display", "Segoe UI", sans-serif;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.ops-shell {
+  min-height: 100vh;
+}
+
+.ops-grid-bg {
+  background-image:
+    linear-gradient(rgba(17, 17, 17, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(17, 17, 17, 0.03) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
