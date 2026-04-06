@@ -1,0 +1,13 @@
+aiosqlite
+asyncpg
+fastapi
+uvicorn
+sqlalchemy
+pydantic
+langgraph
+llama-index
+redis
+python-dotenv
+websockets
+psycopg2-binary
+alembic

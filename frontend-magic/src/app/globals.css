@@ -1,0 +1,59 @@
+@import "tailwindcss";
+
+@theme {
+  --color-gold: #FFD700;
+  --color-neon: #00FFFF;
+  --color-obsidian: #050505;
+}
+
+:root {
+  --background: #050505;
+  --foreground: #ffffff;
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: 'Inter', sans-serif;
+  overflow-x: hidden;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.magic-gradient {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, rgba(0, 255, 255, 0.05) 100%);
+}
+
+.bento-card {
+  background: rgba(10, 10, 10, 0.8);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 215, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.bento-card:hover {
+  border-color: rgba(255, 215, 0, 0.4);
+  box-shadow: 0 0 30px rgba(255, 215, 0, 0.05);
+  transform: translateY(-2px);
+}
+
+.glass-nav {
+  background: rgba(5, 5, 5, 0.8);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255, 215, 0, 0.1);
+}
+
+@keyframes glitch {
+  0% { transform: translate(0); }
+  20% { transform: translate(-2px, 2px); }
+  40% { transform: translate(-2px, -2px); }
+  60% { transform: translate(2px, 2px); }
+  80% { transform: translate(2px, -2px); }
+  100% { transform: translate(0); }
+}
+
+.glitch-hover:hover {
+  animation: glitch 0.3s infinite;
+}

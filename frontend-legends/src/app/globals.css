@@ -1,0 +1,70 @@
+@import "tailwindcss";
+
+@theme {
+  --color-gold: #FFD700;
+  --color-neon: #00FFFF;
+  --color-obsidian: #050505;
+}
+
+:root {
+  --background: #050505;
+  --foreground: #ffffff;
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: var(--font-geist-sans), sans-serif;
+  overflow-x: hidden;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at top, rgba(255, 215, 0, 0.06), transparent 28%),
+    radial-gradient(circle at 80% 20%, rgba(56, 189, 248, 0.05), transparent 22%);
+  z-index: 0;
+}
+
+.cinematic-shadow {
+  box-shadow: 0 40px 100px -20px rgba(0,0,0,0.8);
+}
+
+.reveal-handle {
+  filter: drop-shadow(0 0 10px rgba(0,0,0,0.5));
+}
+
+.erp-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.erp-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px -12px rgba(0,0,0,0.1);
+}
+
+.nav-link {
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: #666;
+  transition: color 0.3s ease;
+}
+
+.nav-link:hover {
+  color: #FFD700;
+}

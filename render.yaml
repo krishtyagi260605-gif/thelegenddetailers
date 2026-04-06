@@ -1,0 +1,33 @@
+services:
+  - type: web
+    name: legenddetailers-api
+    runtime: python
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: legenddetailers-db
+          property: connectionString
+      - key: ADMIN_USERNAME
+        value: admin
+      - key: ADMIN_PASSCODE
+        sync: false
+      - key: ADMIN_TOKEN_SECRET
+        generateValue: true
+      - key: CORS_ORIGINS
+        value: https://thelegenddetailers.onrender.com
+
+  - type: web
+    name: thelegenddetailers
+    runtime: node
+    rootDir: frontend-legends
+    buildCommand: npm install && npm run build
+    startCommand: npm run start -- --hostname 0.0.0.0 --port $PORT
+    envVars:
+      - key: NEXT_PUBLIC_API_BASE_URL
+        value: https://legenddetailers-api.onrender.com
+
+databases:
+  - name: legenddetailers-db
