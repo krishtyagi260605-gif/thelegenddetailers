@@ -25,6 +25,12 @@ OPS_OWNER_PASSWORD = os.getenv("OPS_OWNER_PASSWORD", ADMIN_PASSCODE)
 OPS_EMPLOYEE_USERNAME = os.getenv("OPS_EMPLOYEE_USERNAME", "employee")
 OPS_EMPLOYEE_NAME = os.getenv("OPS_EMPLOYEE_NAME", "Employee")
 OPS_EMPLOYEE_PASSWORD = os.getenv("OPS_EMPLOYEE_PASSWORD", "legendemployee")
+OPS_EMPLOYEE_2_USERNAME = os.getenv("OPS_EMPLOYEE_2_USERNAME", "tld_begowal")
+OPS_EMPLOYEE_2_NAME = os.getenv("OPS_EMPLOYEE_2_NAME", "TLD Begowal")
+OPS_EMPLOYEE_2_PASSWORD = os.getenv("OPS_EMPLOYEE_2_PASSWORD", "TLDBegowal@2026")
+OPS_EMPLOYEE_3_USERNAME = os.getenv("OPS_EMPLOYEE_3_USERNAME", "tld_phagwara_lpu")
+OPS_EMPLOYEE_3_NAME = os.getenv("OPS_EMPLOYEE_3_NAME", "TLD Phagwara LPU")
+OPS_EMPLOYEE_3_PASSWORD = os.getenv("OPS_EMPLOYEE_3_PASSWORD", "TLDPhagwaraLPU@2026")
 
 PASSWORD_ITERATIONS = 240_000
 
@@ -158,6 +164,18 @@ async def ensure_default_ops_users() -> None:
             "username": OPS_EMPLOYEE_USERNAME.strip(),
             "full_name": OPS_EMPLOYEE_NAME.strip(),
             "password": OPS_EMPLOYEE_PASSWORD,
+            "role": UserRole.EMPLOYEE,
+        },
+        {
+            "username": OPS_EMPLOYEE_2_USERNAME.strip(),
+            "full_name": OPS_EMPLOYEE_2_NAME.strip(),
+            "password": OPS_EMPLOYEE_2_PASSWORD,
+            "role": UserRole.EMPLOYEE,
+        },
+        {
+            "username": OPS_EMPLOYEE_3_USERNAME.strip(),
+            "full_name": OPS_EMPLOYEE_3_NAME.strip(),
+            "password": OPS_EMPLOYEE_3_PASSWORD,
             "role": UserRole.EMPLOYEE,
         },
     ]
