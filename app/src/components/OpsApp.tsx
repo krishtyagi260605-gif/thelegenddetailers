@@ -6,6 +6,7 @@ import {
   CarFront,
   CircleDollarSign,
   ClipboardList,
+  Trash2,
   Loader2,
   LogOut,
   Search,
@@ -25,8 +26,15 @@ const serviceOptions = [
   "Graphene Coating",
   "Glass Coating",
   "Leather Coating",
-  "Washing",
+  "Dry Clean",
+  "Rubbing",
   "Rubbing & Dry Clean",
+  "Washing",
+  "Washing with Diesel",
+  "Scratch Remove",
+  "Paint Correction",
+  "Under body coating",
+  "Washing with engine detail",
 ];
 
 type AppUser = {
@@ -127,6 +135,8 @@ type IntakeState = {
   assignedTo: string;
   notes: string;
 };
+
+type SearchMode = "name" | "vehicle";
 
 const initialIntake: IntakeState = {
   customerId: null,
@@ -287,6 +297,37 @@ function StatusBadge({ status }: { status?: string | null }) {
   );
 }
 
+function DeleteJobButton({
+  jobId,
+  customerName,
+  onDelete,
+  disabled,
+}: {
+  jobId: number;
+  customerName: string;
+  onDelete: (jobId: number) => Promise<void>;
+  disabled?: boolean;
+}) {
+  return (
+    <button
+      type="button"
+      disabled={disabled}
+      onClick={() => {
+        const confirmed = window.confirm(
+          `Delete the job for ${customerName}? This cannot be undone.`
+        );
+        if (confirmed) {
+          void onDelete(jobId);
+        }
+      }}
+      className="inline-flex items-center gap-2 rounded-xl border border-[var(--red)]/20 bg-[var(--red)]/8 px-3 py-2 text-xs font-bold uppercase tracking-[0.12em] text-[var(--red)] disabled:cursor-not-allowed disabled:opacity-60"
+    >
+      <Trash2 className="h-4 w-4" />
+      Delete
+    </button>
+  );
+}
+
 export default function OpsApp() {
   const [token, setToken] = useState<string | null>(null);
   const [user, setUser] = useState<AppUser | null>(null);
@@ -294,11 +335,13 @@ export default function OpsApp() {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [lookup, setLookup] = useState<RepeatLookup | null>(null);
   const [lookupQuery, setLookupQuery] = useState("");
+  const [searchMode, setSearchMode] = useState<SearchMode>("vehicle");
   const [intake, setIntake] = useState<IntakeState>(initialIntake);
   const [checking, setChecking] = useState(true);
   const [loginLoading, setLoginLoading] = useState(false);
   const [lookupLoading, setLookupLoading] = useState(false);
   const [saveLoading, setSaveLoading] = useState(false);
+  const [deletingJobId, setDeletingJobId] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const groupedJobs = useMemo(
@@ -391,9 +434,8 @@ export default function OpsApp() {
     setError(null);
     try {
       const clean = lookupQuery.trim();
-      const path = clean.match(/^\d{8,}$/)
-        ? `/api/legends/ops/lookups/repeat?phone=${encodeURIComponent(clean)}`
-        : clean.length >= 5 && /[a-z0-9]/i.test(clean)
+      const path =
+        searchMode === "vehicle"
           ? `/api/legends/ops/lookups/repeat?plate=${encodeURIComponent(clean)}`
           : `/api/legends/ops/lookups/repeat?q=${encodeURIComponent(clean)}`;
       const payload = await fetchJson<RepeatLookup>(path, {
@@ -477,6 +519,23 @@ export default function OpsApp() {
       await loadOpsData(token);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Status update failed");
+    }
+  }
+
+  async function handleDeleteJob(jobId: number) {
+    if (!token) return;
+    setDeletingJobId(jobId);
+    setError(null);
+    try {
+      await fetchJson(`/api/legends/ops/jobs/${jobId}`, {
+        method: "DELETE",
+        headers: appHeaders(token),
+      });
+      await loadOpsData(token);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Delete failed");
+    } finally {
+      setDeletingJobId(null);
     }
   }
 
@@ -616,6 +675,16 @@ export default function OpsApp() {
                       <span className="text-[var(--muted)]">{job.service_type}</span>
                       <span className="font-bold text-[var(--text)]">{money(job.amount)}</span>
                     </div>
+                    {user.role === "owner" ? (
+                      <div className="mt-3 flex justify-end">
+                        <DeleteJobButton
+                          jobId={job.id}
+                          customerName={job.customer_name}
+                          onDelete={handleDeleteJob}
+                          disabled={deletingJobId === job.id}
+                        />
+                      </div>
+                    ) : null}
                   </div>
                 ))}
               </div>
@@ -638,15 +707,35 @@ export default function OpsApp() {
                 </div>
                 <div>
                   <h2 className="text-2xl font-black tracking-tight text-[var(--text)]">Repeat customer autofill</h2>
-                  <p className="text-sm text-[var(--muted)]">Search by phone, plate number, or customer name.</p>
+                  <p className="text-sm text-[var(--muted)]">Search by vehicle number or customer name.</p>
                 </div>
+              </div>
+
+              <div className="mt-5 inline-flex rounded-2xl border border-black/10 bg-white p-1">
+                {[
+                  { label: "Vehicle No", value: "vehicle" as const },
+                  { label: "Name", value: "name" as const },
+                ].map((item) => (
+                  <button
+                    key={item.value}
+                    type="button"
+                    onClick={() => setSearchMode(item.value)}
+                    className={`rounded-[0.9rem] px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] transition-all ${
+                      searchMode === item.value
+                        ? "bg-black text-white"
+                        : "text-[var(--muted)]"
+                    }`}
+                  >
+                    {item.label}
+                  </button>
+                ))}
               </div>
 
               <div className="mt-5 flex gap-3">
                 <input
                   value={lookupQuery}
                   onChange={(event) => setLookupQuery(event.target.value)}
-                  placeholder="Phone, plate, or customer name"
+                  placeholder={searchMode === "vehicle" ? "Enter vehicle number" : "Enter customer name"}
                   className="min-w-0 flex-1 rounded-2xl border border-black/10 bg-[#faf7f1] px-4 py-4 text-base outline-none transition-colors focus:border-[var(--gold)]"
                 />
                 <button
@@ -739,11 +828,21 @@ export default function OpsApp() {
             </div>
 
             <div className="mt-6 grid gap-4 lg:grid-cols-2">
-              <input value={intake.fullName} onChange={(e) => setIntake({ ...intake, fullName: e.target.value })} placeholder="Customer full name" className="rounded-2xl border border-black/10 bg-[#faf7f1] px-4 py-4 outline-none transition-colors focus:border-[var(--gold)]" />
+              <label className="space-y-2">
+                <span className="block text-[11px] font-bold uppercase tracking-[0.16em] text-[var(--text)]">
+                  Name <span className="text-[var(--red)]">*</span>
+                </span>
+                <input value={intake.fullName} onChange={(e) => setIntake({ ...intake, fullName: e.target.value })} placeholder="Customer full name" className="w-full rounded-2xl border border-black/10 bg-[#faf7f1] px-4 py-4 outline-none transition-colors focus:border-[var(--gold)]" />
+              </label>
               <input value={intake.phone} onChange={(e) => setIntake({ ...intake, phone: e.target.value })} placeholder="Phone number" className="rounded-2xl border border-black/10 bg-[#faf7f1] px-4 py-4 outline-none transition-colors focus:border-[var(--gold)]" />
               <input value={intake.altPhone} onChange={(e) => setIntake({ ...intake, altPhone: e.target.value })} placeholder="Alt phone" className="rounded-2xl border border-black/10 bg-[#faf7f1] px-4 py-4 outline-none transition-colors focus:border-[var(--gold)]" />
               <input value={intake.address} onChange={(e) => setIntake({ ...intake, address: e.target.value })} placeholder="Address" className="rounded-2xl border border-black/10 bg-[#faf7f1] px-4 py-4 outline-none transition-colors focus:border-[var(--gold)]" />
-              <input value={intake.plateNumber} onChange={(e) => setIntake({ ...intake, plateNumber: e.target.value.toUpperCase() })} placeholder="Plate number" className="rounded-2xl border border-black/10 bg-[#faf7f1] px-4 py-4 outline-none transition-colors focus:border-[var(--gold)]" />
+              <label className="space-y-2">
+                <span className="block text-[11px] font-bold uppercase tracking-[0.16em] text-[var(--text)]">
+                  Vehicle No <span className="text-[var(--red)]">*</span>
+                </span>
+                <input value={intake.plateNumber} onChange={(e) => setIntake({ ...intake, plateNumber: e.target.value.toUpperCase() })} placeholder="Vehicle number" className="w-full rounded-2xl border border-black/10 bg-[#faf7f1] px-4 py-4 outline-none transition-colors focus:border-[var(--gold)]" />
+              </label>
               <input value={intake.brand} onChange={(e) => setIntake({ ...intake, brand: e.target.value })} placeholder="Vehicle brand" className="rounded-2xl border border-black/10 bg-[#faf7f1] px-4 py-4 outline-none transition-colors focus:border-[var(--gold)]" />
               <input value={intake.model} onChange={(e) => setIntake({ ...intake, model: e.target.value })} placeholder="Vehicle model" className="rounded-2xl border border-black/10 bg-[#faf7f1] px-4 py-4 outline-none transition-colors focus:border-[var(--gold)]" />
               <input value={intake.color} onChange={(e) => setIntake({ ...intake, color: e.target.value })} placeholder="Color" className="rounded-2xl border border-black/10 bg-[#faf7f1] px-4 py-4 outline-none transition-colors focus:border-[var(--gold)]" />
@@ -760,7 +859,7 @@ export default function OpsApp() {
 
               <select value={intake.paymentMode} onChange={(e) => setIntake({ ...intake, paymentMode: e.target.value })} className="rounded-2xl border border-black/10 bg-[#faf7f1] px-4 py-4 outline-none transition-colors focus:border-[var(--gold)]">
                 <option>Cash</option>
-                <option>Online / UPI</option>
+                <option>Online</option>
               </select>
 
               <select value={intake.serviceLocation} onChange={(e) => setIntake({ ...intake, serviceLocation: e.target.value })} className="rounded-2xl border border-black/10 bg-[#faf7f1] px-4 py-4 outline-none transition-colors focus:border-[var(--gold)]">
@@ -833,6 +932,16 @@ export default function OpsApp() {
                             <option key={status}>{status}</option>
                           ))}
                         </select>
+                        {user.role === "owner" ? (
+                          <div className="mt-3 flex justify-end">
+                            <DeleteJobButton
+                              jobId={job.id}
+                              customerName={job.customer_name}
+                              onDelete={handleDeleteJob}
+                              disabled={deletingJobId === job.id}
+                            />
+                          </div>
+                        ) : null}
                       </div>
                     ))
                   ) : (

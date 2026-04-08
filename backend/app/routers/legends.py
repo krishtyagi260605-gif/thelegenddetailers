@@ -533,6 +533,22 @@ async def ops_update_job(
     return serialize_service(service)
 
 
+@router.delete("/ops/jobs/{service_id}")
+async def ops_delete_job(
+    service_id: int,
+    session_payload: dict = Depends(require_ops_user),
+    db: AsyncSession = Depends(get_db),
+):
+    user = await get_app_user_or_401(int(session_payload["user_id"]), db)
+    if user.role != UserRole.OWNER:
+        raise HTTPException(status_code=403, detail="Only the owner can delete jobs")
+
+    service = await get_service_or_404(service_id, db)
+    await db.delete(service)
+    await db.commit()
+    return {"status": "deleted", "id": service_id}
+
+
 @router.get("/ops/dashboard")
 async def ops_dashboard(
     _session_payload: dict = Depends(require_ops_user),

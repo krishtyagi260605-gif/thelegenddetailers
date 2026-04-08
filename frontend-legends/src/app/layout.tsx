@@ -1,24 +1,26 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Bebas_Neue, Rajdhani } from "next/font/google";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const headingFont = Bebas_Neue({
+  variable: "--font-heading",
   subsets: ["latin"],
+  weight: "400",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const bodyFont = Rajdhani({
+  variable: "--font-body",
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {
-  title: "Legends Detailers | Premium PPF, Ceramic, Graphene & Detailing",
+  title: "The Legend Detailers | Premium PPF, Ceramic, Graphene & Detailing",
   description:
-    "Premium automobile detailing website for PPF, ceramic coating, graphene coating, wash, dry clean, glass coating, and doorstep service. Follow @thelegenddetailers.",
+    "Immersive premium detailing website for The Legend Detailers. PPF, ceramic coating, graphene coating, wash, dry clean, glass coating, leather care, and doorstep service.",
   openGraph: {
-    title: "Legends Detailers",
-    description: "Premium automotive detailing, protection, and client-ready admin workflow.",
+    title: "The Legend Detailers",
+    description: "Luxury automotive detailing, protection, and cinematic studio storytelling.",
   },
 };
 
@@ -30,7 +32,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${headingFont.variable} ${bodyFont.variable} antialiased`}
       >
         {children}
       </body>
