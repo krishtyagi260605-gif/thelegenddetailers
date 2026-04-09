@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 
 import { appHeaders, fetchJson } from "@/lib/api";
+import { CAR_MODEL_OPTIONS } from "@/lib/car-models";
 
 const STORAGE_KEY = "legends_ops_token";
 
@@ -120,13 +121,11 @@ type IntakeState = {
   fullName: string;
   phone: string;
   altPhone: string;
-  address: string;
   customerNotes: string;
   plateNumber: string;
   brand: string;
   model: string;
   color: string;
-  fuelType: string;
   vehicleNotes: string;
   serviceType: string;
   amount: string;
@@ -144,13 +143,11 @@ const initialIntake: IntakeState = {
   fullName: "",
   phone: "",
   altPhone: "",
-  address: "",
   customerNotes: "",
   plateNumber: "",
   brand: "",
   model: "",
   color: "",
-  fuelType: "",
   vehicleNotes: "",
   serviceType: "Ceramic Coating",
   amount: "",
@@ -353,6 +350,25 @@ export default function OpsApp() {
     [jobs]
   );
 
+  const makeOptions = useMemo(
+    () => Array.from(new Set(CAR_MODEL_OPTIONS.map((option) => option.make))).sort(),
+    []
+  );
+
+  const modelOptions = useMemo(() => {
+    const brand = intake.brand.trim().toLowerCase();
+    const query = intake.model.trim().toLowerCase();
+    return CAR_MODEL_OPTIONS.filter((option) => {
+      const matchesBrand = !brand || option.make.toLowerCase().includes(brand);
+      const matchesQuery =
+        !query ||
+        option.label.toLowerCase().includes(query) ||
+        option.model.toLowerCase().includes(query) ||
+        option.make.toLowerCase().includes(query);
+      return matchesBrand && matchesQuery;
+    });
+  }, [intake.brand, intake.model]);
+
   async function loadOpsData(activeToken: string) {
     const [dashboardData, jobsData] = await Promise.all([
       fetchJson<Dashboard>("/api/legends/ops/dashboard", { headers: appHeaders(activeToken) }),
@@ -391,13 +407,11 @@ export default function OpsApp() {
       fullName: customer?.full_name ?? current.fullName,
       phone: customer?.phone ?? current.phone,
       altPhone: customer?.alt_phone ?? current.altPhone,
-      address: customer?.address ?? current.address,
       customerNotes: customer?.notes ?? current.customerNotes,
       plateNumber: vehicle?.plate_number ?? current.plateNumber,
       brand: vehicle?.brand ?? current.brand,
       model: vehicle?.model ?? current.model,
       color: vehicle?.color ?? current.color,
-      fuelType: vehicle?.fuel_type ?? current.fuelType,
       vehicleNotes: vehicle?.notes ?? current.vehicleNotes,
     }));
   }
@@ -477,7 +491,6 @@ export default function OpsApp() {
             fullName: intake.fullName,
             phone: intake.phone,
             altPhone: intake.altPhone,
-            address: intake.address,
             notes: intake.customerNotes,
           },
           vehicle: {
@@ -486,7 +499,6 @@ export default function OpsApp() {
             brand: intake.brand,
             model: intake.model,
             color: intake.color,
-            fuelType: intake.fuelType,
             notes: intake.vehicleNotes,
           },
           serviceType: intake.serviceType,
@@ -608,7 +620,7 @@ export default function OpsApp() {
           </div>
         </section>
 
-        {dashboard ? (
+        {dashboard && user.role === "owner" ? (
           <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-6">
             <MetricCard label="Today" value={money(dashboard.summary.daily_turnover)} icon={<CircleDollarSign className="h-5 w-5" />} />
             <MetricCard label="Month" value={money(dashboard.summary.monthly_turnover)} icon={<CircleDollarSign className="h-5 w-5" />} />
@@ -634,18 +646,20 @@ export default function OpsApp() {
                     Search by phone or plate, pull old customer details, and create the next job without making the staff type the same information again.
                   </p>
                 </div>
-                <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-                  {[
-                    `${dashboard.summary.active_jobs} active`,
-                    `${dashboard.summary.total_customers} customers`,
-                    `${dashboard.summary.total_vehicles} vehicles`,
-                    `${dashboard.summary.repeat_customers} repeat`,
-                  ].map((item) => (
-                    <div key={item} className="rounded-2xl border border-white/10 bg-white/5 px-4 py-4 text-center text-sm font-bold text-white">
-                      {item}
-                    </div>
-                  ))}
-                </div>
+                {user.role === "owner" ? (
+                  <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                    {[
+                      `${dashboard.summary.active_jobs} active`,
+                      `${dashboard.summary.total_customers} customers`,
+                      `${dashboard.summary.total_vehicles} vehicles`,
+                      `${dashboard.summary.repeat_customers} repeat`,
+                    ].map((item) => (
+                      <div key={item} className="rounded-2xl border border-white/10 bg-white/5 px-4 py-4 text-center text-sm font-bold text-white">
+                        {item}
+                      </div>
+                    ))}
+                  </div>
+                ) : null}
               </div>
             </div>
 
@@ -836,17 +850,66 @@ export default function OpsApp() {
               </label>
               <input value={intake.phone} onChange={(e) => setIntake({ ...intake, phone: e.target.value })} placeholder="Phone number" className="rounded-2xl border border-black/10 bg-[#faf7f1] px-4 py-4 outline-none transition-colors focus:border-[var(--gold)]" />
               <input value={intake.altPhone} onChange={(e) => setIntake({ ...intake, altPhone: e.target.value })} placeholder="Alt phone" className="rounded-2xl border border-black/10 bg-[#faf7f1] px-4 py-4 outline-none transition-colors focus:border-[var(--gold)]" />
-              <input value={intake.address} onChange={(e) => setIntake({ ...intake, address: e.target.value })} placeholder="Address" className="rounded-2xl border border-black/10 bg-[#faf7f1] px-4 py-4 outline-none transition-colors focus:border-[var(--gold)]" />
+                <label className="space-y-2">
+                  <span className="block text-[11px] font-bold uppercase tracking-[0.16em] text-[var(--text)]">
+                    Vehicle No <span className="text-[var(--red)]">*</span>
+                  </span>
+                <input
+                  value={intake.plateNumber}
+                  onChange={(e) => setIntake({ ...intake, plateNumber: e.target.value.toUpperCase() })}
+                  placeholder="Vehicle number"
+                  className="w-full rounded-2xl border border-black/10 bg-[#faf7f1] px-4 py-4 outline-none transition-colors focus:border-[var(--gold)]"
+                />
+                </label>
               <label className="space-y-2">
                 <span className="block text-[11px] font-bold uppercase tracking-[0.16em] text-[var(--text)]">
-                  Vehicle No <span className="text-[var(--red)]">*</span>
+                  Vehicle Brand
                 </span>
-                <input value={intake.plateNumber} onChange={(e) => setIntake({ ...intake, plateNumber: e.target.value.toUpperCase() })} placeholder="Vehicle number" className="w-full rounded-2xl border border-black/10 bg-[#faf7f1] px-4 py-4 outline-none transition-colors focus:border-[var(--gold)]" />
+                <input
+                  value={intake.brand}
+                  onChange={(e) => setIntake({ ...intake, brand: e.target.value })}
+                  placeholder="Vehicle brand"
+                  list="car-make-options"
+                  className="w-full rounded-2xl border border-black/10 bg-[#faf7f1] px-4 py-4 outline-none transition-colors focus:border-[var(--gold)]"
+                />
+                <datalist id="car-make-options">
+                  {makeOptions.map((item) => (
+                    <option key={item} value={item} />
+                  ))}
+                </datalist>
               </label>
-              <input value={intake.brand} onChange={(e) => setIntake({ ...intake, brand: e.target.value })} placeholder="Vehicle brand" className="rounded-2xl border border-black/10 bg-[#faf7f1] px-4 py-4 outline-none transition-colors focus:border-[var(--gold)]" />
-              <input value={intake.model} onChange={(e) => setIntake({ ...intake, model: e.target.value })} placeholder="Vehicle model" className="rounded-2xl border border-black/10 bg-[#faf7f1] px-4 py-4 outline-none transition-colors focus:border-[var(--gold)]" />
+              <label className="space-y-2 lg:col-span-1">
+                <span className="block text-[11px] font-bold uppercase tracking-[0.16em] text-[var(--text)]">
+                  Vehicle Model <span className="text-[var(--red)]">*</span>
+                </span>
+                <input
+                  value={intake.model}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    const selected = CAR_MODEL_OPTIONS.find(
+                      (item) =>
+                        item.label.toLowerCase() === value.toLowerCase() ||
+                        item.model.toLowerCase() === value.toLowerCase()
+                    );
+                    setIntake({
+                      ...intake,
+                      model: selected?.label ?? value,
+                      brand: selected?.make ?? intake.brand,
+                    });
+                  }}
+                  list="car-model-options"
+                  placeholder="Type make or model"
+                  className="w-full rounded-2xl border border-black/10 bg-[#faf7f1] px-4 py-4 outline-none transition-colors focus:border-[var(--gold)]"
+                />
+                <datalist id="car-model-options">
+                  {modelOptions.map((item) => (
+                    <option key={item.label} value={item.label}>
+                      {item.label}
+                    </option>
+                  ))}
+                </datalist>
+              </label>
               <input value={intake.color} onChange={(e) => setIntake({ ...intake, color: e.target.value })} placeholder="Color" className="rounded-2xl border border-black/10 bg-[#faf7f1] px-4 py-4 outline-none transition-colors focus:border-[var(--gold)]" />
-              <input value={intake.fuelType} onChange={(e) => setIntake({ ...intake, fuelType: e.target.value })} placeholder="Fuel type" className="rounded-2xl border border-black/10 bg-[#faf7f1] px-4 py-4 outline-none transition-colors focus:border-[var(--gold)]" />
               <input value={intake.assignedTo} onChange={(e) => setIntake({ ...intake, assignedTo: e.target.value })} placeholder="Assigned employee" className="rounded-2xl border border-black/10 bg-[#faf7f1] px-4 py-4 outline-none transition-colors focus:border-[var(--gold)]" />
 
               <select value={intake.serviceType} onChange={(e) => setIntake({ ...intake, serviceType: e.target.value })} className="rounded-2xl border border-black/10 bg-[#faf7f1] px-4 py-4 outline-none transition-colors focus:border-[var(--gold)]">

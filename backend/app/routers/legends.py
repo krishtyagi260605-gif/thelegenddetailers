@@ -39,11 +39,11 @@ class OpsLogin(BaseModel):
 
 
 class ServiceCreate(BaseModel):
-    customerName: str = Field(default="Client", min_length=2)
+    customerName: str = Field(default="Client")
     customerPhone: Optional[str] = None
     vehicleBrand: Optional[str] = None
-    carModel: str = Field(..., min_length=2)
-    plateNumber: str = Field(..., min_length=5)
+    carModel: str
+    plateNumber: str
     serviceType: str
     amount: float = Field(..., gt=0)
     paymentMode: str
@@ -63,7 +63,7 @@ class ServiceUpdate(BaseModel):
 
 class CustomerPayload(BaseModel):
     id: Optional[int] = None
-    fullName: str = Field(..., min_length=2)
+    fullName: str
     phone: Optional[str] = None
     altPhone: Optional[str] = None
     address: Optional[str] = None
@@ -72,9 +72,9 @@ class CustomerPayload(BaseModel):
 
 class VehiclePayload(BaseModel):
     id: Optional[int] = None
-    plateNumber: str = Field(..., min_length=5)
+    plateNumber: str
     brand: Optional[str] = None
-    model: str = Field(..., min_length=2)
+    model: str
     color: Optional[str] = None
     fuelType: Optional[str] = None
     notes: Optional[str] = None
@@ -475,7 +475,7 @@ async def ops_create_job(
 
 @router.get("/ops/jobs")
 async def ops_get_jobs(
-    q: Optional[str] = Query(default=None, min_length=2),
+    q: Optional[str] = Query(default=None),
     status: Optional[str] = Query(default=None),
     limit: int = Query(default=60, ge=1, le=200),
     _session_payload: dict = Depends(require_ops_user),
@@ -619,7 +619,7 @@ async def create_service(
 
 @router.get("/services", response_model=List[dict])
 async def get_services(
-    q: Optional[str] = Query(default=None, min_length=2),
+    q: Optional[str] = Query(default=None),
     status: Optional[str] = Query(default=None),
     limit: int = Query(default=50, ge=1, le=200),
     db: AsyncSession = Depends(get_db),
@@ -680,7 +680,7 @@ async def update_service(
 
 
 @router.get("/history")
-async def get_history(q: str = Query(..., min_length=2), db: AsyncSession = Depends(get_db)):
+async def get_history(q: str = Query(...), db: AsyncSession = Depends(get_db)):
     stmt = select(VehicleService).where(
         or_(
             VehicleService.plate_number.ilike(f"%{q}%"),
